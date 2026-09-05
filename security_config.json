@@ -1,0 +1,20 @@
+{
+    "1544037784422060123": {
+        "enabled": true,
+        "anti_spam": true,
+        "anti_mass_mention": true,
+        "anti_invites": true,
+        "anti_raid": true,
+        "anti_nuke": true,
+        "min_account_age_days": 3,
+        "spam_messages": 6,
+        "spam_seconds": 8,
+        "mass_mentions": 5,
+        "raid_joins": 6,
+        "raid_seconds": 20,
+        "nuke_actions": 3,
+        "security_channel_id": null,
+        "trusted_users": [],
+        "log_channel_id": 1545170261803016292
+    }
+}

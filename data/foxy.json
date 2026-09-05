@@ -1,0 +1,17 @@
+{
+    "id": "foxy_virtual",
+    "nombre": "Foxy",
+    "nivel": 1,
+    "xp": 35,
+    "dinero": 213,
+    "vida": 100,
+    "vida_max": 100,
+    "energia": 90,
+    "energia_max": 100,
+    "estado": "Descansado",
+    "partidas": 0,
+    "victorias": 0,
+    "derrotas": 0,
+    "racha": 0,
+    "mejor_racha": 0
+}

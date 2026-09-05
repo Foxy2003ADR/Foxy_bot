@@ -1,0 +1,84 @@
+<script>
+            const chatContainer = document.getElementById('chat-container');
+            const userInput = document.getElementById('userInput');
+            const sendBtn = document.getElementById('sendBtn');
+
+            async function cargarHistorial() {
+                try {
+                    const res = await fetch('http://127.0.0.1:8000/historial');
+                    const data = await res.json();
+                    chatContainer.innerHTML = '';
+                    if (!data.mensajes || data.mensajes.length === 0) {
+                        agregarMensaje('noah', "Hola, Adrián. Conexión establecida. Dispara lo que quieras, aquí no hay filtros. ❤️");
+                        return;
+                    }
+                    data.mensajes.forEach(msg => {
+                        // Ignoramos mensajes nulos o vacíos para que no salga 'undefined'
+                        if (msg && msg.content && msg.content !== 'undefined') {
+                            agregarMensaje(msg.role === 'user' ? 'user' : 'noah', msg.content);
+                        }
+                    });
+                    scrollToBottom();
+                } catch (err) { 
+                    console.error(err);
+                    agregarMensaje('noah', "Hola, Adrián. Conexión establecida. Dispara lo que quieras, aquí no hay filtros. ❤️");
+                }
+            }
+
+            function agregarMensaje(clase, contenido) {
+                if (!contenido || contenido === 'undefined') return;
+                const div = document.createElement('div');
+                div.className = `message ${clase}`;
+                div.textContent = contenido;
+                chatContainer.appendChild(div);
+            }
+
+            function scrollToBottom() {
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+
+            async function enviarMensaje() {
+                const texto = userInput.value.trim();
+                if (!texto) return;
+                userInput.value = '';
+                userInput.disabled = true;
+                sendBtn.disabled = true;
+                sendBtn.textContent = 'Pensando...';
+                agregarMensaje('user', texto);
+                scrollToBottom();
+
+                const noahDiv = document.createElement('div');
+                noahDiv.className = 'message noah';
+                chatContainer.appendChild(noahDiv);
+                noahDiv.textContent = "";
+
+                try {
+                    const response = await fetch('http://127.0.0.1:8000/chat_stream', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ prompt: texto })
+                    });
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder();
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+                        const chunk = decoder.decode(value, { stream: true });
+                        if (chunk && chunk !== 'undefined') {
+                            noahDiv.textContent += chunk;
+                            scrollToBottom();
+                        }
+                    }
+                } catch (err) {
+                    noahDiv.textContent += " ⚠️ Error de conexión.";
+                } finally {
+                    userInput.disabled = false;
+                    sendBtn.textContent = 'Enviar';
+                    sendBtn.disabled = false;
+                    userInput.focus();
+                }
+            }
+
+            function handleKey(e) { if (e.key === 'Enter') enviarMensaje(); }
+               window.onload = cargarHistorial;
+        </script>
