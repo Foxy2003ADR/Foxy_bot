@@ -964,6 +964,10 @@ async def on_ready():
     )
 
     logger.info(
+        "💖 [Noah]: ¡El muchacho ya está en línea y brillando en el chat, mi tigre!"
+    )
+
+    logger.info(
         "🆔 ID: %s",
         bot.user.id
     )
